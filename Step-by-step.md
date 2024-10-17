@@ -70,7 +70,131 @@ mete o transit gateway id da outra regiao: ex : tgw-039672365aa938288
 
 vai inicializar, depois é so aceitar. Transit gateway peering é so um, não precisas duas vezes!
 
-O acceptance só funciona da segunda region.
+O acceptance só funciona da segunda region. (porque mandaste da priemira)
 
 
 ----------END VPC----------
+
+
+
+
+----------S3 BUCKET----------
+Ir ao S3 e clicar create bucket
+
+danielpimentel96742
+---------END S3--------------
+
+----------INSTANCES----------
+srv.pdl.local
+ubuntu
+t2.small
+meter a chave
+meter a vpc (pdl-vpc)
+subnet publica
+
+network interfaces...
+public 1 : 10.0.0.100
+private 1 : 10.0.8.100
+private 2 : 10.0.9.100
+
+na esquerda meter as subnets direitas para cada interface
+anotar a interface publica e ir associar um ip elastico
+
+
+
+
+
+dmzwin.pdl.local
+t2.micro
+meter chave
+meter vpc (pdl-vpc)
+subnet private2
+
+network interfaces...
+private 2 : 10.0.9.101
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+---------END INSTANCES---------
