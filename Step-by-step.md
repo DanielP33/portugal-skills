@@ -45,13 +45,13 @@ VPC endpoints: S3 Gateway
 Enable DNS hostnames: Yes
 Enable DNS resolution: Yes
 
-Renomear as VPCs que já veio para "DEFAULT VPC"
+Renomear as VPCs que já veio para "DEFAULT VPC" (opcional)
 
 -----Configurar o transit Gateway:-----
 No Console AWS, vá para o serviço "VPC" e, em seguida, procure por Transit Gateway no menu lateral.
 Clique em Create Transit Gateway.
 
-Pode ficar tudo default, tens e de fazer dois transit gateways, um para cada região.
+Pode ficar tudo default, tens é de fazer dois transit gateways, um para cada região.
 
 Após a criação da Transit Gateway, precisas anexar as VPCs que queres interligar.
 Ainda no Console AWS, vá para Transit Gateway Attachments.
@@ -84,6 +84,11 @@ Ir ao S3 e clicar create bucket
 danielpimentel96742
 ---------END S3--------------
 
+
+
+
+
+
 ----------INSTANCES----------
 srv.pdl.local
 ubuntu
@@ -114,6 +119,25 @@ network interfaces...
 private 2 : 10.0.9.101
 
 
+
+
+dmzlux.pdl.local
+Ubuntu
+t2.micro
+meter chave
+metever vpc (pdl-vpc)
+
+private 2 : 10.0.9.102
+
+
+
+
+
+
+cli.pdl.local
+Ubuntu (Graphical Interface)
+t2.small
+private 1 : 10.0.8.101
 
 
 
