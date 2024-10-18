@@ -132,8 +132,6 @@ private 2 : 10.0.9.102
 
 
 
-
-
 cli.pdl.local
 Ubuntu (Graphical Interface)
 t2.small
@@ -141,7 +139,7 @@ private 1 : 10.0.8.101
 
 
 
-
+------------------
 
 
 
