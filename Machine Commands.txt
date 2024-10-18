@@ -4,6 +4,7 @@ sudo hostnamectl set-hostname srv.pdl.local
 sudo sed -i "2s/.*/127.0.1.1 srv.pdl.local/" /etc/hosts
 sudo apt update && sudo apt upgrade -y
 sudo reboot
+
 sudo su -
 passwd ubuntu
 # COLOCAR A SENHA <Passw0rd>
