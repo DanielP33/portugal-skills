@@ -1,0 +1,138 @@
+----------[SRV.PDL.LOCAL]----------
+
+sudo hostnamectl set-hostname srv.pdl.local
+sudo sed -i "2s/.*/127.0.1.1 srv.pdl.local/" /etc/hosts
+sudo apt update && sudo apt upgrade -y
+sudo reboot
+sudo su -
+passwd ubuntu
+# COLOCAR A SENHA <Passw0rd>
+nano /etc/sysctl.conf
+# DESCOMENTAR A LINHA: <net.ipv4.ip_forward = 1>
+sysctl -p
+# CONFIRMAR O OUTPUT <net.ipv4.ip_forward = 1>
+apt install iptables-persistent -y
+iptables -t nat -A POSTROUTING -o eth0 -j MASQUERADE
+iptables -A PREROUTING -t nat -i eth0 -p tcp --dport 3389 -j DNAT --to-destination <IP_CLI.PDL.LOCAL>:3389
+iptables -A FORWARD -p tcp -d <IP_CLI.PDL.LOCAL> --dport 3389 -j ACCEPT
+iptables-save > /etc/iptables/rules.v4
+apt install easy-rsa
+cd /usr/share/easy-rsa/
+./easyrsa init-pki
+./easyrsa build-ca
+# Input: <enta>
+./easyrsa gen-req enta nopass
+# Input: <enta>
+./easyrsa sign-req server enta
+# Input: <yes>
+# Input: <Passw0rd> (x2)
+# Certificados para o srv.angra.local
+scp -i aws-oregon.pem /usr/share/easy-rsa/pki/issued/enta.crt ec2-user@<IP_MÁQUINA_DESTINO>:/tmp
+scp -i aws-oregon.pem /usr/share/easy-rsa/pki/private/enta.key ec2-user@<IP_MÁQUINA_DESTINO>:/tmp
+
+
+
+
+scp -i chave.pem /usr/share/easy-rsa/pki/issued/enta.crt <USER>@<IP_MÁQUINA_DESTINO>:/tmp
+scp -i chave.pem /usr/share/easy-rsa/pki/private/enta.key <USER>@<IP_MÁQUINA_DESTINO>:/tmp
+
+
+
+----------[SRV.ANGRA.LOCAL]-----------
+
+
+
+BASIC:
+
+sudo hostnamectl set-hostname srv.angra.local
+sudo sed -i "2s/.*/127.0.1.1 srv.angra.local/" /etc/hosts
+sudo sed -i '3i ::1         localhost6 localhost6.localdomain6' /etc/hosts
+sudo yum update -y
+
+
+
+################################################################################
+# web server redirect help = https://chatgpt.com/share/6712e989-3b64-800e-9d47-3a16341dc2ff
+################################################################################
+
+sudo amazon-linux-extras install epel -y
+sudo yum install nginx php php-fpm -y
+sudo nano /etc/php-fpm.d/www.conf
+-------------------------------------------------------------------------------------------------------
+(dentro do nano)
+listen = /run/php-fpm/www.sock
+user = nginx
+group = nginx
+-------------------------------------------------------------------------------------------------------
+sudo systemctl start php-fpm
+sudo systemctl enable php-fpm
+sudo mkdir -p /var/www/html/http_server
+sudo mkdir -p /var/www/html/https_server
+echo "<?php phpinfo(); ?>" | sudo tee /var/www/html/http_server/info.php /var/www/html/https_server/info.php
+sudo nano /etc/nginx/conf.d/http_server.conf
+-------------------------------------------------------------------------------------------------------
+server {
+    listen 80;
+    server_name srv.angra.local www.eppv.pt;
+
+    root /var/www/html/http_server;
+    index index.php index.html index.htm;
+
+    location / {
+        try_files $uri $uri/ =404;
+    }
+
+    location ~ \.php$ {
+        include /etc/nginx/fastcgi_params;
+        fastcgi_pass unix:/run/php-fpm/www.sock;
+        fastcgi_index index.php;
+        fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
+    }
+
+    location ~ /\.ht {
+        deny all;
+    }
+}
+-------------------------------------------------------------------------------------------------------
+(srv.pdl.local tem os certificados, tens que ir passar os certificados para esta máquina (comandos disponiveis no txt no srv.pdl.local))
+sudo mkdir -p /etc/nginx/ssl
+sudo mv /tmp/enta.crt /etc/nginx/ssl/
+sudo mv /tmp/enta.key /etc/nginx/ssl/
+sudo chmod 600 /etc/nginx/ssl/enta.key
+sudo chmod 644 /etc/nginx/ssl/enta.crt
+
+
+sudo nano /etc/nginx/conf.d/https_server.conf
+-------------------------------------------------------------------------------------------------------
+server {
+    listen 443 ssl;
+    server_name srv.angra.local www.eppv.pt;
+
+    ssl_certificate /etc/nginx/ssl/enta.crt;
+    ssl_certificate_key /etc/nginx/ssl/enta.key;
+
+    root /var/www/html/https_server;
+    index index.php index.html index.htm;
+
+    location / {
+        try_files $uri $uri/ =404;
+    }
+
+    location ~ \.php$ {
+        include /etc/nginx/fastcgi_params;
+        fastcgi_pass unix:/run/php-fpm/www.sock;
+        fastcgi_index index.php;
+        fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
+    }
+
+    location ~ /\.ht {
+        deny all;
+    }
+}
+-------------------------------------------------------------------------------------------------------
+sudo chown -R nginx:nginx /var/www/html/
+sudo chmod -R 755 /var/www/html/
+sudo systemctl start nginx
+sudo systemctl enable nginx
+(SECURITY GROUP # ADD 80, 443 ANYWHERE)
+```
