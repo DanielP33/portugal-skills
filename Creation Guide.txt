@@ -139,84 +139,48 @@ private 1 : 10.0.8.101
 
 
 
-------------------
+-- Parte de Angra(oregon) --
 
+srv.angra.local
+t2.micro
+amazon linux 2 ami hvm
 
+public 2: 172.16.0.100
+private 2: 172.16.144.100
+Elastic IP
 
 
 
 
 
+intrawin.angra.local
+t2.small
+Windows Server
+private 1: 172.16.128.100
 
 
 
 
 
+intralux.angra.local
+t2.micro
+amazon linux 2 ami hvm
+private 1: 172.16.128.102
 
 
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+cli.angra.local
+c5a.large
+amazon linux
+private 2: 172.16.144.101
 
 
 
 ---------END INSTANCES---------
+
+
+
+
+
