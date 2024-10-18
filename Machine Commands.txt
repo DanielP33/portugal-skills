@@ -36,6 +36,72 @@ scp -i aws-oregon.pem /usr/share/easy-rsa/pki/private/enta.key ec2-user@<IP_MÁQ
 
 scp -i chave.pem /usr/share/easy-rsa/pki/issued/enta.crt <USER>@<IP_MÁQUINA_DESTINO>:/tmp
 scp -i chave.pem /usr/share/easy-rsa/pki/private/enta.key <USER>@<IP_MÁQUINA_DESTINO>:/tmp
+----------END [SRV.PDL.LOCAL] END ----------
+
+
+
+
+
+
+
+
+
+
+----------[cli.pdl.local]----------
+sudo hostnamectl set-hostname cli.pdl.local
+sudo sed -i "2s/.*/127.0.1.1 cli.pdl.local/" /etc/hosts
+sudo apt update && sudo apt upgrade -y
+sudo reboot
+sudo su -
+passwd ubuntu
+# COLOCAR A SENHA <Passw0rd>
+nano /etc/netplan/50-cloud-init.yaml
+(COMENTAR TUDO O QUE TIVER DESCOMENTADO E ADICIONAR ESTE BLOCO ABAIXO)
+-------------------------------------------------------------------------------------------------------
+network:
+  version: 2
+  ethernets:
+    eth0:
+      dhcp4: false
+      addresses: [10.0.8.101/24]  # Substitua pelo endereço IP de cli.pdl.local
+      gateway4: 10.0.8.100  # Substitua pelo endereço IP de srv.pdl.local
+      nameservers:
+        addresses: [10.0.8.100, 8.8.8.8, 8.8.4.4]  # Substitua pelos servidores DNS desejados
+-------------------------------------------------------------------------------------------------------
+netplan try
+# Enter
+netplan apply
+ip route add default via 10.0.8.100
+apt install -y xfce4 xfce4-goodies
+apt install -y xrdp chromium-browser filezilla
+adduser xrdp ssl-cert
+sudo adduser jurado
+# Input: <Passw0rd> (x2)
+# Input: <jurado>
+# ENTER (4x)
+# Input: <y>
+sudo login jurado
+# Input: <Passw0rd>    
+echo xfce4-session > ~/.xsession
+sudo su -
+ufw allow 3389/tcp
+ufw allow 22/tcp
+ufw enable
+ufw reload
+----------END [cli.pdl.local]END ----------
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -143,3 +209,4 @@ sudo systemctl start nginx
 sudo systemctl enable nginx
 (SECURITY GROUP # ADD 80, 443 ANYWHERE)
 ```
+----------END [SRV.ANGRA.LOCAL] END-----------
