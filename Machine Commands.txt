@@ -21,6 +21,7 @@ apt install easy-rsa
 cd /usr/share/easy-rsa/
 ./easyrsa init-pki
 ./easyrsa build-ca
+# Input: <Passw0rd>
 # Input: <enta>
 ./easyrsa gen-req enta nopass
 # Input: <enta>
