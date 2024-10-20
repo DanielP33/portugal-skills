@@ -51,7 +51,6 @@ scp -i chave.pem /usr/share/easy-rsa/pki/private/enta.key <USER>@<IP_MÁQUINA_DE
 ----------[cli.pdl.local]----------
 sudo hostnamectl set-hostname cli.pdl.local
 sudo sed -i "2s/.*/127.0.1.1 cli.pdl.local/" /etc/hosts
-sudo apt update && sudo apt upgrade -y
 sudo reboot
 sudo su -
 passwd ubuntu
@@ -73,6 +72,7 @@ netplan try
 # Enter
 netplan apply
 ip route add default via 10.0.8.100
+sudo apt update && sudo apt upgrade -y
 apt install -y xfce4 xfce4-goodies
 apt install -y xrdp chromium-browser filezilla
 adduser xrdp ssl-cert
