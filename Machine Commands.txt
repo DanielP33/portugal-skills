@@ -13,10 +13,13 @@ nano /etc/sysctl.conf
 sysctl -p
 # CONFIRMAR O OUTPUT <net.ipv4.ip_forward = 1>
 apt install iptables-persistent -y
+
+#Verificar as interfaces (pode ser enx0)
 iptables -t nat -A POSTROUTING -o eth0 -j MASQUERADE
 iptables -A PREROUTING -t nat -i eth0 -p tcp --dport 3389 -j DNAT --to-destination <IP_CLI.PDL.LOCAL>:3389
 iptables -A FORWARD -p tcp -d <IP_CLI.PDL.LOCAL> --dport 3389 -j ACCEPT
 iptables-save > /etc/iptables/rules.v4
+
 apt install easy-rsa
 cd /usr/share/easy-rsa/
 ./easyrsa init-pki
@@ -72,6 +75,7 @@ netplan try
 # Enter
 netplan apply
 ip route add default via 10.0.8.100
+#IR Á AWS E DAR UNCHECK SOURCE DESTINATION CHECK NO SRV.PDL.LOCAL
 sudo apt update && sudo apt upgrade -y
 apt install -y xfce4 xfce4-goodies
 apt install -y xrdp chromium-browser filezilla
